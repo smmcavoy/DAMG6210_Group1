@@ -136,7 +136,7 @@ CREATE PROCEDURE dbo.sp_getFlightManifest
 --gets all passengers named on tickets for a specific flight
     @FlightNo INT
 AS
-    SELECT t.TicketNumber, t.FName, t.LName, t.BirthDt
+    SELECT t.TicketNumber, t.FName, t.LName
     FROM Ticket t
     WHERE t.Flight = @FlightNo
     RETURN;
@@ -180,7 +180,7 @@ AS
     WHERE s.ResolutionDt IS NULL 
     GROUP BY s.Plane
 ) 
-SELECT p.RegistrationNumber, p.Manufacturer, p.Model, p.Capacity, n.origin, n.destination, n.departs, n.arrives, ISNULL(sr.NumberOpenSRs,0) AS NumberOpenSRs, sr.MaxPriority
+SELECT p.RegistrationNumber, p.Manufacturer, p.Model, p.Capacity, dbo.KMFlown(p.RegistrationNumber, '1800-01-01', Default) AS KMFlown, n.origin, n.destination, n.departs, n.arrives, ISNULL(sr.NumberOpenSRs,0) AS NumberOpenSRs, sr.MaxPriority
 FROM Plane p
     LEFT OUTER JOIN NextFlight n ON p.RegistrationNumber=n.plane
     LEFT OUTER JOIN SRsOpen sr ON p.RegistrationNumber=sr.Plane
